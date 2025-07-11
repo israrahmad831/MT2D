@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom font face declaration */
+@font-face {
+  font-family: 'GameFont';
+  src: url('../components/assets/font.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Disable text selection and context menu */
+body {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  background: #000;
+  overflow: hidden;
+  font-family: 'GameFont', 'Press Start 2P', monospace;
+}
+
+/* Add pixel-art rendering for all game images */
+img {
+  image-rendering: pixelated;
+}
+
+/* Global pixel text style - now using custom font */
+.pixel-text {
+  font-family: 'GameFont', 'Press Start 2P', monospace;
+  image-rendering: pixelated;
+  letter-spacing: 1px;
+}
+
+/* Fallback font for Press Start 2P */
+@font-face {
+  font-family: 'Press Start 2P';
+  src: url('https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff2') format('woff2');
+  font-display: swap;
+}
+
+/* Apply custom font to all text elements */
+* {
+  font-family: 'GameFont', 'Press Start 2P', monospace;
+}
+
+/* Specific overrides for game elements */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'GameFont', 'Press Start 2P', monospace;
+}
+
+p, span, div, button, input, label {
+  font-family: 'GameFont', 'Press Start 2P', monospace;
+}

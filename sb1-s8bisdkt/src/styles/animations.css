@@ -1,0 +1,134 @@
+/* Sword Spin Effect */
+.sword-spin-effect {
+  position: fixed;
+  width: 100px;
+  height: 100px;
+  background-image: url('https://i.imgur.com/E7cFDqM.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  pointer-events: none;
+  filter: drop-shadow(0 0 15px rgba(255, 100, 0, 0.8));
+  animation: glowPulse 1s infinite alternate ease-in-out;
+  image-rendering: pixelated;
+}
+
+/* Animation for the sword spin effect */
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Enemy death animation */
+@keyframes enemyDeath {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    filter: brightness(1.5) saturate(2);
+  }
+  50% {
+    transform: scale(1.2) rotate(5deg);
+    opacity: 0.5;
+    filter: brightness(2) saturate(3);
+  }
+  100% {
+    transform: scale(0) rotate(15deg);
+    opacity: 0;
+    filter: brightness(3) saturate(0);
+  }
+}
+
+/* Number display for attack sequence */
+.attack-number {
+  position: absolute;
+  font-weight: bold;
+  color: white;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  font-size: 16px;
+  text-shadow: 0 0 3px black, 0 0 3px black, 0 0 3px black, 0 0 3px black;
+  animation: attackNumberPop 0.3s ease-out;
+  font-family: 'GameFont', 'Press Start 2P', monospace;
+  image-rendering: pixelated;
+}
+
+@keyframes attackNumberPop {
+  0% { transform: translateX(-50%) scale(0.5); opacity: 0; }
+  50% { transform: translateX(-50%) scale(1.5); opacity: 1; }
+  100% { transform: translateX(-50%) scale(1); opacity: 1; }
+}
+
+/* Layered sprite animations */
+@keyframes layeredAttackGlow {
+  0% { 
+    filter: brightness(1.2) contrast(1.1) drop-shadow(0 0 5px rgba(255,255,255,0.3));
+  }
+  50% { 
+    filter: brightness(1.5) contrast(1.3) drop-shadow(0 0 15px rgba(255,255,255,0.6));
+  }
+  100% { 
+    filter: brightness(1.2) contrast(1.1) drop-shadow(0 0 5px rgba(255,255,255,0.3));
+  }
+}
+
+/* Enhanced attack effect animations */
+@keyframes weaponTrail {
+  0% {
+    opacity: 0.8;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes effectBurst {
+  0% {
+    opacity: 0.6;
+    transform: scale(0.9);
+    filter: brightness(1.2) contrast(1.1);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: brightness(1.8) contrast(1.5);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1);
+    filter: brightness(1.3) contrast(1.2);
+  }
+}
+
+/* Sprite layer specific animations */
+.sprite-layer-character {
+  animation: none;
+}
+
+.sprite-layer-weapon {
+  animation: weaponTrail 0.6s ease-in-out infinite;
+}
+
+.sprite-layer-effect {
+  animation: effectBurst 0.6s ease-in-out infinite;
+}
+
+/* Level up text animation with custom font */
+.level-up-text {
+  font-family: 'GameFont', 'Press Start 2P', monospace;
+  image-rendering: pixelated;
+  text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
+}

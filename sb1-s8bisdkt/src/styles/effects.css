@@ -1,0 +1,55 @@
+/* Snow animation styles */
+.snow-container {
+  overflow: hidden;
+}
+
+.snow {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.9;
+  animation: snowfall linear infinite;
+  pointer-events: none;
+  filter: blur(1px);
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0.5;
+  }
+}
+
+/* Mount movement effect */
+.mount-movement {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  filter: blur(3px);
+  animation: mountEffect 0.6s infinite alternate ease-in-out;
+}
+
+@keyframes mountEffect {
+  0% {
+    transform: translateX(-50%) scaleX(1);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateX(-50%) scaleX(1.2);
+    opacity: 0.3;
+  }
+}

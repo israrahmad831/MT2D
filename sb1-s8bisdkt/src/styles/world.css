@@ -1,0 +1,120 @@
+/* Game world ambient effects */
+.game-world {
+  position: relative;
+  overflow: hidden;
+}
+
+.game-world::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Enhanced player movement animations */
+@keyframes playerWalk {
+  0% { transform: translateY(0px) scale(1); }
+  25% { transform: translateY(-2px) scale(1.02); }
+  50% { transform: translateY(0px) scale(1); }
+  75% { transform: translateY(-1px) scale(1.01); }
+  100% { transform: translateY(0px) scale(1); }
+}
+
+@keyframes playerShadowPulse {
+  0% { transform: scale(1) translateY(0); opacity: 0.4; }
+  50% { transform: scale(0.9) translateY(2px); opacity: 0.3; }
+  100% { transform: scale(1) translateY(0); opacity: 0.4; }
+}
+
+@keyframes playerGlow {
+  0% { opacity: 0.4; filter: brightness(1); }
+  50% { opacity: 0.6; filter: brightness(1.2); }
+  100% { opacity: 0.4; filter: brightness(1); }
+}
+
+/* Ground texture effect */
+.ground-texture {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://i.imgur.com/kB7Fgpe.png');
+  background-size: 200px 200px;
+  opacity: 0.1;
+  pointer-events: none;
+  animation: textureScroll 20s linear infinite;
+}
+
+@keyframes textureScroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 200px 200px; }
+}
+
+/* Dynamic lighting effects */
+.dynamic-light {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at var(--light-x, 50%) var(--light-y, 50%),
+    rgba(255, 255, 200, 0.1) 0%,
+    transparent 70%
+  );
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Pixel perfect rendering for attack animations */
+.pixel-perfect {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  /* Prevent subpixel rendering issues */
+  transform: translate3d(0, 0, 0);
+}
+
+/* Enhanced attack animation styles */
+.attack-animation {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* Ensure all sprite layers render pixelated */
+.sprite-layer {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+
+/* Tile rendering improvements to eliminate seams */
+.seamless-tile {
+  position: absolute;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+  transform: translateZ(0);
+  will-change: transform;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+  /* Apply slight padding to cover seams */
+  padding: 1px;
+  margin: -1px;
+  box-sizing: content-box;
+}
