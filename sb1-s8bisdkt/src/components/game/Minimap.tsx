@@ -1,6 +1,6 @@
 // Minimap.tsx
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Player, Enemy } from '../../types';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { Player, Enemy } from "../../types";
 
 interface MinimapProps {
   player: Player;
@@ -17,7 +17,7 @@ const Minimap: React.FC<MinimapProps> = ({
   currentMap,
   mapSize,
   showFullMap,
-  onToggleFullMap
+  onToggleFullMap,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fullMapCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -27,61 +27,101 @@ const Minimap: React.FC<MinimapProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  
-  const MINIMAP_SIZE = 135;
-  const BASE_FRAME_WIDTH = 720;
-  const BASE_FRAME_HEIGHT = 480;
-  const ZOOM_AREA = 400;
-  const CLICKABLE_AREA_SIZE = 150;
 
-  const minimapMaskUrl = 'https://i.imgur.com/Ft6FOho.png';
+  // Responsive minimap size (clamp between 90px and 180px, based on both width and height)
+  const MINIMAP_SIZE = Math.max(
+    90,
+    Math.min(
+      180,
+      Math.floor(Math.min(window.innerWidth * 0.12, window.innerHeight * 0.18))
+    )
+  );
+  // Responsive full map frame size (square, clamp between 320px and 90vw/vh)
+  const BASE_FRAME_SIZE = Math.max(
+    320,
+    Math.min(
+      600,
+      Math.floor(Math.min(window.innerWidth, window.innerHeight) * 0.7)
+    )
+  );
+  const BASE_FRAME_WIDTH = BASE_FRAME_SIZE;
+  const BASE_FRAME_HEIGHT = BASE_FRAME_SIZE;
+  const ZOOM_AREA = 400;
+  const CLICKABLE_AREA_SIZE = MINIMAP_SIZE + 15;
+
+  const minimapMaskUrl = "https://i.imgur.com/Ft6FOho.png";
 
   // Calculate current frame dimensions (fixed at 100% scale)
   const currentFrameWidth = BASE_FRAME_WIDTH;
   const currentFrameHeight = BASE_FRAME_HEIGHT;
-  const currentMapWidth = (currentFrameWidth - 200) * 0.85; // Adjusted for right shift
-  const currentMapHeight = (currentFrameHeight - 60) * 0.85;
+  // Responsive map canvas area inside the frame (square)
+  const currentMapSize = Math.max(
+    180,
+    Math.floor((currentFrameWidth - 120) * 0.85)
+  );
+  const currentMapWidth = currentMapSize;
+  const currentMapHeight = currentMapSize;
 
+  // Center the full map on open and on resize
   useEffect(() => {
-    if (showFullMap && mapPosition.x === 0 && mapPosition.y === 0) {
+    if (showFullMap) {
       setMapPosition({
-        x: (window.innerWidth - currentFrameWidth - 40) / 2,
-        y: (window.innerHeight - currentFrameHeight - 180) / 2
+        x: Math.max(0, (window.innerWidth - currentFrameWidth) / 2),
+        y: Math.max(0, (window.innerHeight - currentFrameHeight) / 2),
       });
     }
-  }, [showFullMap, mapPosition, currentFrameWidth, currentFrameHeight]);
+    // Listen for resize
+    const handleResize = () => {
+      if (showFullMap) {
+        setMapPosition({
+          x: Math.max(0, (window.innerWidth - currentFrameWidth) / 2),
+          y: Math.max(0, (window.innerHeight - currentFrameHeight) / 2),
+        });
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [showFullMap, currentFrameWidth, currentFrameHeight]);
 
-  const getMapImageUrl = () => {
-    if (currentMap === 'map1') return 'https://i.imgur.com/dHuad2L.png';
+  const getMapImageUrl = React.useCallback(() => {
+    if (currentMap === "map1") return "https://i.imgur.com/dHuad2L.png";
     return null;
-  };
+  }, [currentMap]);
 
-  const getMapBackground = () => {
+  const getMapBackground = React.useCallback(() => {
     switch (currentMap) {
-      case 'sohan': return '#2d3748';
-      case 'yogbi': return '#d69e2e';
-      case 'village': return '#38a169';
-      default: return '#38a169';
+      case "sohan":
+        return "#2d3748";
+      case "yogbi":
+        return "#d69e2e";
+      case "village":
+        return "#38a169";
+      default:
+        return "#38a169";
     }
-  };
+  }, [currentMap]);
 
   const getMapName = () => {
     switch (currentMap) {
-      case 'sohan': return 'Mount Sohan';
-      case 'yogbi': return 'Yogbi Desert';
-      case 'village': return 'Village';
-      default: return 'Seungryong Valley';
+      case "sohan":
+        return "Mount Sohan";
+      case "yogbi":
+        return "Yogbi Desert";
+      case "village":
+        return "Village";
+      default:
+        return "Seungryong Valley";
     }
   };
 
   const drawMinimap = useCallback(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
+    const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
     ctx.clearRect(0, 0, MINIMAP_SIZE, MINIMAP_SIZE);
     const img = mapImageRef.current;
-    if (currentMap === 'map1' && img) {
+    if (currentMap === "map1" && img) {
       const scaleX = img.width / mapSize.width;
       const scaleY = img.height / mapSize.height;
       const srcX = (player.position.x - ZOOM_AREA / 2) * scaleX;
@@ -89,7 +129,17 @@ const Minimap: React.FC<MinimapProps> = ({
       const srcW = ZOOM_AREA * scaleX;
       const srcH = ZOOM_AREA * scaleY;
 
-      ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, MINIMAP_SIZE, MINIMAP_SIZE);
+      ctx.drawImage(
+        img,
+        srcX,
+        srcY,
+        srcW,
+        srcH,
+        0,
+        0,
+        MINIMAP_SIZE,
+        MINIMAP_SIZE
+      );
     } else {
       ctx.fillStyle = getMapBackground();
       ctx.fillRect(0, 0, MINIMAP_SIZE, MINIMAP_SIZE);
@@ -97,26 +147,26 @@ const Minimap: React.FC<MinimapProps> = ({
 
     const scale = MINIMAP_SIZE / ZOOM_AREA;
 
-    enemies.forEach(enemy => {
+    enemies.forEach((enemy) => {
       if (enemy.health <= 0) return;
       const dx = enemy.position.x - player.position.x;
       const dy = enemy.position.y - player.position.y;
       if (Math.abs(dx) > ZOOM_AREA / 2 || Math.abs(dy) > ZOOM_AREA / 2) return;
       const x = MINIMAP_SIZE / 2 + dx * scale;
       const y = MINIMAP_SIZE / 2 + dy * scale;
-      ctx.fillStyle = '#e53e3e';
+      ctx.fillStyle = "#e53e3e";
       ctx.beginPath();
       ctx.arc(x, y, 3, 0, Math.PI * 2);
       ctx.fill();
     });
 
-    ctx.fillStyle = '#38a169';
+    ctx.fillStyle = "#38a169";
     ctx.beginPath();
     ctx.arc(MINIMAP_SIZE / 2, MINIMAP_SIZE / 2, 4, 0, Math.PI * 2);
     ctx.fill();
 
     const dirLength = 8;
-    ctx.strokeStyle = '#68d391';
+    ctx.strokeStyle = "#68d391";
     ctx.beginPath();
     ctx.moveTo(MINIMAP_SIZE / 2, MINIMAP_SIZE / 2);
     ctx.lineTo(
@@ -124,11 +174,11 @@ const Minimap: React.FC<MinimapProps> = ({
       MINIMAP_SIZE / 2 + player.direction.y * dirLength
     );
     ctx.stroke();
-  }, [player, enemies, currentMap, mapSize]);
+  }, [player, enemies, currentMap, mapSize, MINIMAP_SIZE, getMapBackground]);
 
   const drawFullMap = useCallback(() => {
     const canvas = fullMapCanvasRef.current;
-    const ctx = canvas?.getContext('2d');
+    const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
     ctx.clearRect(0, 0, currentMapWidth, currentMapHeight);
@@ -143,11 +193,11 @@ const Minimap: React.FC<MinimapProps> = ({
     const scaleX = currentMapWidth / mapSize.width;
     const scaleY = currentMapHeight / mapSize.height;
 
-    enemies.forEach(enemy => {
+    enemies.forEach((enemy) => {
       if (enemy.health <= 0) return;
       const x = enemy.position.x * scaleX;
       const y = enemy.position.y * scaleY;
-      ctx.fillStyle = '#e53e3e';
+      ctx.fillStyle = "#e53e3e";
       ctx.beginPath();
       ctx.arc(x, y, 5, 0, Math.PI * 2);
       ctx.fill();
@@ -155,19 +205,29 @@ const Minimap: React.FC<MinimapProps> = ({
 
     const px = player.position.x * scaleX;
     const py = player.position.y * scaleY;
-    ctx.fillStyle = '#38a169';
+    ctx.fillStyle = "#38a169";
     ctx.beginPath();
     ctx.arc(px, py, 8, 0, Math.PI * 2);
     ctx.fill();
 
     const dirLen = 20;
-    ctx.strokeStyle = '#68d391';
+    ctx.strokeStyle = "#68d391";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(px, py);
-    ctx.lineTo(px + player.direction.x * dirLen, py + player.direction.y * dirLen);
+    ctx.lineTo(
+      px + player.direction.x * dirLen,
+      py + player.direction.y * dirLen
+    );
     ctx.stroke();
-  }, [player, enemies, mapSize, currentMapWidth, currentMapHeight]);
+  }, [
+    player,
+    enemies,
+    mapSize,
+    currentMapWidth,
+    currentMapHeight,
+    getMapBackground,
+  ]);
 
   useEffect(() => {
     const url = getMapImageUrl();
@@ -183,7 +243,7 @@ const Minimap: React.FC<MinimapProps> = ({
       drawMinimap();
       if (showFullMap) drawFullMap();
     };
-  }, [currentMap, drawMinimap, drawFullMap, showFullMap]);
+  }, [currentMap, drawMinimap, drawFullMap, showFullMap, getMapImageUrl]);
 
   useEffect(() => {
     drawMinimap();
@@ -205,44 +265,81 @@ const Minimap: React.FC<MinimapProps> = ({
     const handleMouseMove = (e: MouseEvent) => {
       const dx = e.clientX - dragStart.x;
       const dy = e.clientY - dragStart.y;
-      const newX = Math.max(0, Math.min(window.innerWidth - currentFrameWidth - 60, dragOffset.x + dx));
-      const newY = Math.max(0, Math.min(window.innerHeight - currentFrameHeight - 120, dragOffset.y + dy));
+      const newX = Math.max(
+        0,
+        Math.min(window.innerWidth - currentFrameWidth - 60, dragOffset.x + dx)
+      );
+      const newY = Math.max(
+        0,
+        Math.min(
+          window.innerHeight - currentFrameHeight - 120,
+          dragOffset.y + dy
+        )
+      );
       setMapPosition({ x: newX, y: newY });
     };
 
     const handleMouseUp = () => setIsDragging(false);
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging, dragStart, dragOffset, currentFrameWidth, currentFrameHeight]);
+  }, [
+    isDragging,
+    dragStart,
+    dragOffset,
+    currentFrameWidth,
+    currentFrameHeight,
+  ]);
 
   return (
     <>
       <div
         className="fixed top-0 left-0 z-50 cursor-pointer"
-        style={{ width: `${CLICKABLE_AREA_SIZE}px`, height: `${CLICKABLE_AREA_SIZE}px`, backgroundColor: 'transparent' }}
+        style={{
+          width: `${CLICKABLE_AREA_SIZE}px`,
+          height: `${CLICKABLE_AREA_SIZE}px`,
+          backgroundColor: "transparent",
+        }}
         onClick={onToggleFullMap}
       />
 
       <div className="fixed top-1 left-2 z-40">
-        <div className="relative w-[150px] h-[150px]">
+        <div
+          className="relative"
+          style={{
+            width: `${MINIMAP_SIZE + 10}px`,
+            height: `${MINIMAP_SIZE + 10}px`,
+          }}
+        >
           <canvas
             ref={canvasRef}
             width={MINIMAP_SIZE}
             height={MINIMAP_SIZE}
             className="rounded-full absolute top-0 left-0 z-10"
-            style={{ imageRendering: 'pixelated' }}
+            style={{
+              imageRendering: "pixelated",
+              width: `${MINIMAP_SIZE}px`,
+              height: `${MINIMAP_SIZE}px`,
+              maxWidth: "180px",
+              maxHeight: "180px",
+            }}
           />
           <img
             src={minimapMaskUrl}
             alt="minimap-ui"
             className="absolute top-0 left-0 z-20 w-full h-full pointer-events-none"
-            style={{ left: '-3px' }}
+            style={{
+              left: "-3px",
+              width: `${MINIMAP_SIZE}px`,
+              height: `${MINIMAP_SIZE}px`,
+              maxWidth: "180px",
+              maxHeight: "180px",
+            }}
           />
           <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-center z-30">
             <span className="text-white text-xs pixel-text bg-black bg-opacity-60 px-2 py-1 rounded">
@@ -261,13 +358,18 @@ const Minimap: React.FC<MinimapProps> = ({
               top: mapPosition.y,
               width: currentFrameWidth,
               height: currentFrameHeight,
-              cursor: isDragging ? 'grabbing' : 'grab',
-              backgroundImage: 'url(https://i.imgur.com/GzWkQp2.png)',
-              backgroundSize: '100% 100%',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              imageRendering: 'pixelated',
-              transition: isDragging ? 'none' : 'all 0.2s ease-out'
+              maxWidth: "95vw",
+              maxHeight: "90vh",
+              minHeight: "400px",
+              zIndex: 1000,
+              cursor: isDragging ? "grabbing" : "grab",
+              backgroundImage: "url(https://i.imgur.com/GzWkQp2.png)",
+              backgroundSize: "100% 100%",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "center",
+              imageRendering: "pixelated",
+              transition: isDragging ? "none" : "all 0.2s ease-out",
+              boxShadow: "0 4px 32px 0 rgba(0,0,0,0.4)",
             }}
             onMouseDown={handleMouseDown}
           >
@@ -280,22 +382,35 @@ const Minimap: React.FC<MinimapProps> = ({
               </p>
             </div>
 
-            <div className="absolute" style={{ 
-              left: '120px', // Increased from 60px to shift content right
-              top: '80px' 
-            }}>
+            <div
+              className="absolute"
+              style={{
+                left: `${Math.max(40, Math.floor(currentFrameWidth * 0.16))}px`,
+                top: `${Math.max(
+                  140,
+                  Math.floor(currentFrameHeight * 0.17)
+                )}px`,
+              }}
+            >
               <canvas
                 ref={fullMapCanvasRef}
                 width={currentMapWidth}
                 height={currentMapHeight}
                 className="pointer-events-none"
-                style={{ imageRendering: 'pixelated' }}
+                style={{
+                  imageRendering: "pixelated",
+                  width: `${currentMapWidth}px`,
+                  height: `${currentMapHeight}px`,
+                }}
               />
             </div>
 
-            <div className="absolute left-1/2 transform -translate-x-1/2 flex justify-center gap-8" style={{ 
-              bottom: '30px'
-            }}>
+            <div
+              className="absolute left-1/2 transform -translate-x-1/2 flex justify-center gap-8"
+              style={{
+                bottom: "30px",
+              }}
+            >
               <div className="flex items-center gap-2">
                 <div className="bg-green-500 rounded-full w-4 h-4"></div>
                 <span className="text-white pixel-text text-sm">Player</span>
@@ -313,3 +428,4 @@ const Minimap: React.FC<MinimapProps> = ({
 };
 
 export default Minimap;
+// This code defines a Minimap component that displays a minimap of the game world
