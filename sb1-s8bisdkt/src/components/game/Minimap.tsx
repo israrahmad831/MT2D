@@ -32,7 +32,7 @@ const Minimap: React.FC<MinimapProps> = ({
   const MINIMAP_SIZE = Math.max(
     90,
     Math.min(
-      180,
+      200,
       Math.floor(Math.min(window.innerWidth * 0.12, window.innerHeight * 0.18))
     )
   );
@@ -323,8 +323,8 @@ const Minimap: React.FC<MinimapProps> = ({
             className="rounded-full absolute top-0 left-0 z-10"
             style={{
               imageRendering: "pixelated",
-              width: `${MINIMAP_SIZE}px`,
-              height: `${MINIMAP_SIZE}px`,
+              width: `${MINIMAP_SIZE - 13}px`,
+              height: `${MINIMAP_SIZE - 3}px`,
               maxWidth: "180px",
               maxHeight: "180px",
             }}
@@ -337,8 +337,6 @@ const Minimap: React.FC<MinimapProps> = ({
               left: "-3px",
               width: `${MINIMAP_SIZE}px`,
               height: `${MINIMAP_SIZE}px`,
-              maxWidth: "180px",
-              maxHeight: "180px",
             }}
           />
           <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-center z-30">
