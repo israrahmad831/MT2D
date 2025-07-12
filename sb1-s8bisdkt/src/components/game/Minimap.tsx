@@ -340,7 +340,7 @@ const Minimap: React.FC<MinimapProps> = ({
             }}
           />
           <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-center z-30">
-            <span className="text-white text-xs pixel-text bg-black bg-opacity-60 px-2 py-1 rounded">
+            <span className="text-white text-[0.65rem] md:text-xs pixel-text bg-black bg-opacity-60 px-2 py-1 rounded">
               {getMapName()}
             </span>
           </div>
