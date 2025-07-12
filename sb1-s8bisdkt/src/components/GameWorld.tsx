@@ -1624,21 +1624,23 @@ const GameWorld: React.FC<GameWorldProps> = ({
       onMouseMove={handleMouseMove}
     >
       {isOfflineMode && showOfflineUI && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-80 px-4 py-2 rounded z-50">
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-80 px-3 py-1 rounded z-50 text-[0.65rem] md:text-base">
           <div className="text-center">
-            <div className="text-yellow-400 font-bold mb-2">
+            <div className="text-yellow-400 font-bold mb-2 text-sm md:text-lg">
               Auto-Farming Mode
             </div>
             {!isAutoFarming ? (
-              <div className="text-white">
+              <div className="text-white text-[0.65rem] md:text-base">
                 Next stone in: {offlineFarmTimer}s
               </div>
             ) : (
-              <div className="text-green-400">Attacking stone...</div>
+              <div className="text-green-400 text-[0.65rem] md:text-base">
+                Attacking stone...
+              </div>
             )}
 
             <button
-              className="mt-3 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors"
+              className="mt-3 bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded text-[0.65rem] md:text-sm transition-colors"
               onClick={handleReturnToOnline}
             >
               Return to Online
@@ -1659,7 +1661,7 @@ const GameWorld: React.FC<GameWorldProps> = ({
         onToggleFullMap={() => setShowFullMap((prev) => !prev)}
       />
 
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[300px] bg-black bg-opacity-50 px-3 py-1 rounded z-50 font-mono text-sm coordinates-display">
+      <div className="fixed left-1/2 top-10 transform -translate-x-1/2 -translate-y-1/2 bg-black bg-opacity-50 px-3 py-1 rounded z-50 font-mono text-sm coordinates-display">
         <div className="coordinates-inner flex-row">
           <span className="text-green-400">
             X: {Math.round(player.position.x)}
@@ -1680,7 +1682,7 @@ const GameWorld: React.FC<GameWorldProps> = ({
               border-radius: 6px !important;
               min-width: 90px;
               background: rgba(0,0,0,0.7) !important;
-              z-index: 9999;
+              z-index: 49;
             }
             .coordinates-inner {
               display: flex !important;
@@ -1695,6 +1697,7 @@ const GameWorld: React.FC<GameWorldProps> = ({
           @media (min-width: 768px) {
             .coordinates-inner {
               display: flex;
+              top: 0;
               flex-direction: row;
               align-items: center;
             }
